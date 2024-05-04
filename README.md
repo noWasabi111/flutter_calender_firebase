@@ -17,5 +17,5 @@ samples, guidance on mobile development, and a full API reference.
 
 
 Read list:
-https://pub.dev/documentation/syncfusion_flutter_calendar/latest/calendar/calendar-library.html
-https://support.syncfusion.com/kb/cross-platforms/section/1236
+- https://pub.dev/documentation/syncfusion_flutter_calendar/latest/calendar/calendar-library.html
+- https://support.syncfusion.com/kb/cross-platforms/section/1236
