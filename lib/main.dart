@@ -53,10 +53,13 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             const DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: TextColor,
               ),
               child: Text(
-                  'Drawer Header'
+                'Drawer Header',
+                style: TextStyle(
+                  color: Colors.white
+                ),
               ),
             ),
             ListTile(
