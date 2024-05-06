@@ -7,10 +7,10 @@ class TestPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appBar = AppBar(
-      title: const Text('Sing Up'),
-      backgroundColor: const Color(0XFFe0dfda),
-    );
+    // final appBar = AppBar(
+    //   title: const Text('Sing Up'),
+    //   backgroundColor: const Color(0XFFe0dfda),
+    // );
 
     return Scaffold(
       appBar: AppBar(
