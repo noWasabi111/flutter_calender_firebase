@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
+//import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-
-  
-class TestPage  extends StatelessWidget {
+class TestPage extends StatelessWidget {
   const TestPage({super.key});
 
   @override
@@ -23,31 +21,31 @@ class TestPage  extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-              TextField(
+            TextField(
               decoration: InputDecoration(
-              labelText: 'Name',
+                labelText: 'Name',
+              ),
             ),
-          ),
-          TextField(
-            decoration: InputDecoration(
-            labelText: 'Email',
-          ),
-        ),
-          TextField(
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Email',
+              ),
+            ),
+            TextField(
               obscureText: true,
               decoration: InputDecoration(
-              labelText: 'Password',
+                labelText: 'Password',
+              ),
             ),
-          ),
-          TextField(
+            TextField(
               keyboardType: TextInputType.phone,
               decoration: InputDecoration(
-              labelText: 'Phone',
+                labelText: 'Phone',
+              ),
             ),
-          ),
-          SizedBox(height: 16.0),
-          ElevatedButton(
-            onPressed: ()  => Navigator.of(context).pop(),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(),
               child: Text('Submit'),
             ),
           ],
@@ -56,8 +54,6 @@ class TestPage  extends StatelessWidget {
     );
   }
 }
-
-
 
 //   List<Meeting> _getDataSource() {
 //     final List<Meeting> meetings = <Meeting>[];
@@ -111,5 +107,3 @@ class TestPage  extends StatelessWidget {
 //   Color background;
 //   bool isAllDay;
 // }
-
-

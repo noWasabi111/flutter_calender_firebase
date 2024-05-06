@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'Calender.dart';
 import 'test_page.dart';
@@ -41,6 +42,33 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         toolbarHeight: 0,
         backgroundColor: const Color(0xFF073763),
+      ),
+      drawerDragStartBehavior: DragStartBehavior.start,
+      drawerEdgeDragWidth: 40,
+      drawer: Drawer(
+        width: 150,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                  'Drawer Header'
+              ),
+            ),
+            ListTile(
+              title: const Text('Account'),
+              onTap: () {
+                // Update the state of the app
+                // Then close the drawer
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const TestPage()));
+              },
+            ),
+          ],
+        ),
       ),
       body: Container(
         constraints: const BoxConstraints.expand(),
