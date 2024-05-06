@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'Calender.dart';
 import 'test_page.dart';
+import 'constColor.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
       title: 'Calender',
       theme: ThemeData(
 
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurpleAccent),
+        colorScheme: ColorScheme.fromSeed(seedColor: selectColor),
         useMaterial3: true,
       ),
       home: const MyHomePage(),
@@ -41,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       appBar: AppBar(
         toolbarHeight: 0,
-        backgroundColor: const Color(0xFF073763),
+        backgroundColor: TextColor,
       ),
       drawerDragStartBehavior: DragStartBehavior.start,
       drawerEdgeDragWidth: 40,
@@ -74,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
         constraints: const BoxConstraints.expand(),
         decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFF073763), Color(0xFF341c74)],
+              colors: [backgroundColor,lighter],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             )

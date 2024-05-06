@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter_calender_firebase/test_page.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'constColor.dart';
 
 class Calender extends StatefulWidget {
   const Calender({super.key});
@@ -25,7 +26,7 @@ class _CalenderState extends State<Calender> {
               constraints: const BoxConstraints.expand(),
               decoration: const BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0xFF073763), Color(0xFF341c74), ],
+                    colors: [backgroundColor, lighter ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                   )
@@ -44,7 +45,7 @@ class _CalenderState extends State<Calender> {
                     fontWeight: FontWeight.w400,
                     foreground: Paint()
                       ..style=PaintingStyle.fill
-                      ..color=Colors.white
+                      ..color=TextColor
                   ),
                 ),
                 view: CalendarView.month,
@@ -56,7 +57,7 @@ class _CalenderState extends State<Calender> {
                 viewHeaderStyle: const ViewHeaderStyle(
                   backgroundColor: Colors.transparent,
                   dayTextStyle: TextStyle(
-                    color: Colors.white,
+                    color: TextColor,
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
@@ -79,7 +80,7 @@ class _CalenderState extends State<Calender> {
                       details.date.day.toString(),
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: TextColor,
                         fontSize: 24,
                         fontWeight: FontWeight.w400,
                       ),
@@ -127,7 +128,7 @@ class _CalenderState extends State<Calender> {
         DateTime(today.year, today.month, today.day, 9, 0, 0);
     final DateTime endTime = startTime.add(const Duration(hours: 2, days: 5));
     meetings.add(Meeting(
-        '測試用', startTime, endTime, const Color(0xFF0F8644), false));
+        '測試用', startTime, endTime, eventColor, false));
     return meetings;
   }
 }
