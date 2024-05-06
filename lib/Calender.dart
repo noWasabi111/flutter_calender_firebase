@@ -1,6 +1,7 @@
 //import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_calender_firebase/test_page.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class Calender extends StatefulWidget {
@@ -106,6 +107,11 @@ class _CalenderState extends State<Calender> {
                 ),
               ),
             ),
+          ),
+          SizedBox(height: 16), // 添加一個間距，以便與日曆之間有一些空白
+          ElevatedButton(
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TestPage())),
+            child: Text('按鈕文本'),
           ),
         ],
       ),
