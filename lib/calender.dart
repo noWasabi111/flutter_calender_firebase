@@ -1,5 +1,5 @@
 //import 'package:intl/intl.dart';
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter_calender_firebase/test_page.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -8,12 +8,20 @@ import 'constColor.dart';
 class Calender extends StatefulWidget {
   const Calender({super.key});
 
+
   @override
-  State<StatefulWidget> createState() => _CalenderState();
+  State<StatefulWidget> createState() => CalenderState();
 }
 
-class _CalenderState extends State<Calender> {
+class CalenderState extends State<Calender> {
   final CalendarController _controller = CalendarController();
+
+  void viewMon(){
+    _controller.view = CalendarView.month;
+  }
+  void viewSche(){
+    _controller.view = CalendarView.schedule;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +41,8 @@ class _CalenderState extends State<Calender> {
               ),
               child: SfCalendar(
                 backgroundColor: Colors.transparent,
+                controller: _controller,
+                // HEADER
                 // to use custom header, set H to 0
                 headerHeight: 64,
                 headerDateFormat: 'MMMM',
@@ -50,10 +60,10 @@ class _CalenderState extends State<Calender> {
                 ),
                 view: CalendarView.month,
                 //showNavigationArrow: true,
-                allowedViews: const [
-                  CalendarView.month,
-                  CalendarView.schedule,
-                ],
+                // allowedViews: const [
+                //   CalendarView.month,
+                //   CalendarView.schedule,
+                // ],
                 viewHeaderStyle: const ViewHeaderStyle(
                   backgroundColor: Colors.transparent,
                   dayTextStyle: TextStyle(
@@ -62,13 +72,20 @@ class _CalenderState extends State<Calender> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
+
+                // Some options
                 showDatePickerButton: true,
+                showTodayButton: true,
+
+                //SCHEDULE
                 scheduleViewSettings:  const ScheduleViewSettings(
                   monthHeaderSettings: MonthHeaderSettings(
                     backgroundColor: Colors.white12
                   )
                 ),
                 // MouthCellDesign
+
+                //MONTH
                 monthCellBuilder:
                     (BuildContext buildContext, MonthCellDetails details) {
                   return Container(
@@ -87,7 +104,6 @@ class _CalenderState extends State<Calender> {
                     ),
                   );
                 },
-                controller: _controller,
                 dataSource: MeetingDataSource(_getDataSource()),
                 firstDayOfWeek: 7,
                 // onViewChanged: viewChanged,
@@ -102,9 +118,7 @@ class _CalenderState extends State<Calender> {
                   agendaStyle: AgendaStyle(
                     backgroundColor: Colors.transparent,
                   ),
-                  monthCellStyle: MonthCellStyle(
-
-                  ),
+                  monthCellStyle: MonthCellStyle(),
                 ),
               ),
             ),

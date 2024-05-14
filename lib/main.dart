@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'Calender.dart';
+import 'calender.dart';
 import 'test_page.dart';
 import 'constColor.dart';
 
@@ -17,7 +17,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Calender',
       theme: ThemeData(
-
         colorScheme: ColorScheme.fromSeed(seedColor: selectColor),
         useMaterial3: true,
       ),
@@ -34,12 +33,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  static GlobalKey<CalenderState> sfkey = GlobalKey();
+  static Calender sfcalender = Calender(
+    key: sfkey,
+  );
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       appBar: AppBar(
         toolbarHeight: 0,
         backgroundColor: TextColor,
@@ -51,43 +52,95 @@ class _MyHomePageState extends State<MyHomePage> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: TextColor,
-              ),
-              child: Text(
-                'Drawer Header',
-                style: TextStyle(
-                  color: Colors.white
+            const SizedBox(
+              height: 100,
+              child: DrawerHeader(
+                decoration: BoxDecoration(
+                  color: TextColor,
+                ),
+                child: Text(
+                  '日程行事曆',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
                 ),
               ),
             ),
+            const SizedBox(
+              height: 10,
+            ),
             ListTile(
-              title: const Text('Account'),
+              title: const Text('Month'),
+              leading: const Icon(Icons.calendar_month),
               onTap: () {
                 // Update the state of the app
                 // Then close the drawer
                 Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const TestPage()));
+                sfkey.currentState?.viewMon();
               },
+            ),
+            ListTile(
+              title: const Text('Schedule'),
+              leading: const Icon(Icons.schedule),
+              onTap: () {
+                // Update the state of the app
+                // Then close the drawer
+                Navigator.pop(context);
+                sfkey.currentState?.viewSche();
+              },
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            const MySeparator(
+              height: 0.5,
+              width: 8,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            ExpansionTile(
+              title: const Text('Accounts'),
+              tilePadding: const EdgeInsets.fromLTRB(16, 0, 20, 0),
+              children: [
+                ListTile(
+                  title: const Text(
+                    'Add...',
+                    style: TextStyle(
+                      color: Colors.grey
+                    ),
+                  ),
+                  leading: const Icon(Icons.add),
+                  onTap: () {
+                    // Update the state of the app
+                    // Then close the drawer
+                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const TestPage()));
+                  },
+                ),
+              ],
             ),
           ],
         ),
       ),
+
       body: Container(
         constraints: const BoxConstraints.expand(),
         decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [backgroundColor,lighter],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            )
-        ),
-        child: const Calender(),
-      ) ,
+          colors: [backgroundColor, lighter],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        )),
+        child: sfcalender,
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {  },
+        onPressed: () {},
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
