@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'calender.dart';
 import 'test_page.dart';
 import 'constColor.dart';
@@ -107,11 +108,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 ListTile(
                   title: const Text(
                     'Add...',
-                    style: TextStyle(
-                      color: Colors.grey
-                    ),
+                    style: TextStyle(color: Colors.grey),
                   ),
-                  leading: const Icon(Icons.add),
+                  leading: const Icon(
+                    Icons.add,
+                    color: Colors.grey,
+                  ),
                   onTap: () {
                     // Update the state of the app
                     // Then close the drawer
@@ -140,8 +142,24 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(Icons.add),
+        backgroundColor: eventColor,
+        onPressed: () {
+          // Under progress
+          final Appointment app = Appointment(
+              startTime: sfkey.currentState?.controller.displayDate!,
+              endTime: sfkey.currentState?.controller.displayDate!
+                  .add(const Duration(hours: 2)),
+              subject: 'Add Appointment',
+              color: Colors.blueAccent);
+          sfkey.currentState?.appointmentDataSource.appointments?.add(app);
+          sfkey.currentState?.appointmentDataSource.notifyListeners(
+              CalendarDataSourceAction.add, <Appointment>[app]);
+
+        },
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }

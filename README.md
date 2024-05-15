@@ -9,4 +9,4 @@ Read list:
 
 
 Known issues:
--   Highlight today in month view
+-   None for now?
