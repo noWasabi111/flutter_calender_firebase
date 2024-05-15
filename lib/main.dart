@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'calender.dart';
 import 'test_page.dart';
 import 'constColor.dart';
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
@@ -38,9 +40,26 @@ class _MyHomePageState extends State<MyHomePage> {
   static Calender sfcalender = Calender(
     key: sfkey,
   );
-
+  //  SomeSliderPanelSettings
+  PanelController sliderController = PanelController();
+  @override
+  void initState()
+  {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      sliderController.hide();
+    });
+  }
   @override
   Widget build(BuildContext context) {
+
+    Future<void> showSlider() async {
+      if (!sliderController.isPanelShown){
+        await sliderController.show();
+      }
+      sliderController.open();
+    }
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0,
@@ -130,21 +149,33 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
 
-      body: Container(
-        constraints: const BoxConstraints.expand(),
-        decoration: const BoxDecoration(
-            gradient: LinearGradient(
-          colors: [backgroundColor, lighter],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        )),
-        child: sfcalender,
+      body: SlidingUpPanel(
+        controller: sliderController,
+        panel: Center(
+          child: CloseButton(
+            onPressed: () =>{
+              sliderController.hide()
+            },
+          ),
+        ),
+        body: Container(
+          constraints: const BoxConstraints.expand(),
+          decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [backgroundColor, lighter],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              )),
+          child: sfcalender,
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         backgroundColor: eventColor,
         onPressed: () {
-          // Under progress
+          //  Under progress
+          showSlider();
+          //  Under progress
           final Appointment app = Appointment(
               startTime: sfkey.currentState?.controller.displayDate!,
               endTime: sfkey.currentState?.controller.displayDate!
@@ -162,5 +193,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+
   }
 }
