@@ -5,6 +5,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'calender.dart';
 import 'test_page.dart';
 import 'constColor.dart';
+import 'appointmentEditor.dart';
 
 void main() {
   runApp(const MyApp());
@@ -50,9 +51,26 @@ class _MyHomePageState extends State<MyHomePage> {
       sliderController.hide();
     });
   }
+  bool _showFAB = true;
+  double _roundCorner = 0.0;
+  void showFAB(){
+    setState(() {
+      _showFAB = !_showFAB;
+    });
+  }
+  void onPanelChange(double pos) {
+    setState(() {
+      if (sliderController.isPanelOpen){
+        _roundCorner = 0.0;
+      } else {
+        _roundCorner = 24.0;
+      }
+    });
+  }
+  //  SomeSliderPanelSettingsEnd
   @override
   Widget build(BuildContext context) {
-
+    Size screenSize = MediaQuery.of(context).size;
     Future<void> showSlider() async {
       if (!sliderController.isPanelShown){
         await sliderController.show();
@@ -150,13 +168,53 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
 
       body: SlidingUpPanel(
+        minHeight: 150,
+        maxHeight: screenSize.height,
         controller: sliderController,
-        panel: Center(
-          child: CloseButton(
-            onPressed: () =>{
-              sliderController.hide()
-            },
-          ),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(_roundCorner),
+          topRight: Radius.circular(_roundCorner),
+        ),
+        onPanelSlide: onPanelChange,
+        header: SizedBox(
+          width: screenSize.width,
+          //color: Colors.blueAccent,
+          child: Column(
+            children: [
+              const SizedBox(height: 8,),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CloseButton(
+                    onPressed: () {
+                      sliderController.hide();
+                      showFAB();
+                    },
+                  ),
+                  Container(
+                    height: 4,
+                    width: screenSize.width - 240,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        color: Colors.black38
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {  },
+                    icon: const Icon(
+                      Icons.save,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          )
+        ),
+        panel: Container(
+          padding: const EdgeInsets.only(top: 48),
+          child: const ApmEdit(),
         ),
         body: Container(
           constraints: const BoxConstraints.expand(),
@@ -170,11 +228,12 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: _showFAB ? FloatingActionButton(
         backgroundColor: eventColor,
         onPressed: () {
           //  Under progress
           showSlider();
+          showFAB();
           //  Under progress
           final Appointment app = Appointment(
               startTime: sfkey.currentState?.controller.displayDate!,
@@ -191,8 +250,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Icons.add,
           color: Colors.white,
         ),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ) : null,
     );
-
   }
 }
