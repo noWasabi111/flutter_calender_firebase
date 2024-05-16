@@ -67,6 +67,8 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     });
   }
+
+  ApmEdit apmEditor = const ApmEdit();
   //  SomeSliderPanelSettingsEnd
   @override
   Widget build(BuildContext context) {
@@ -214,7 +216,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         panel: Container(
           padding: const EdgeInsets.only(top: 48),
-          child: const ApmEdit(),
+          child: apmEditor,
         ),
         body: Container(
           constraints: const BoxConstraints.expand(),

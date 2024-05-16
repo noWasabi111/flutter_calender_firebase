@@ -9,16 +9,16 @@ class ApmEdit extends StatefulWidget {
 }
 
 class _ApmEditState extends State<ApmEdit> {
+  Color selectedColor = Colors.blueAccent;
+
   @override
   Widget build(BuildContext context) {
-    // final appBar = AppBar(
-    //   title: const Text('Sing Up'),
-    //   backgroundColor: const Color(0XFFe0dfda),
-    // );
-    Color selectedColor = Colors.blueAccent;
-    MaterialStatesController colorPickerBtnController = MaterialStatesController();
-    Future<void> _openColorPicker() async {
-      bool pickedColor = await ColorPicker(
+
+
+
+
+    Future<bool> openColorPicker() async {
+      return ColorPicker(
         color: selectedColor,
         onColorChanged: (Color newColor) {
           setState(() {
@@ -71,12 +71,18 @@ class _ApmEditState extends State<ApmEdit> {
               ),
             ),
             const SizedBox(height: 4.0),
-            OutlinedButton(
-              statesController: colorPickerBtnController,
-              onPressed: _openColorPicker,
-              style: OutlinedButton.styleFrom(
-                // Not Fix yet!!!!!!
-                backgroundColor: selectedColor,
+            ElevatedButton(
+              onPressed: () async {
+                 final beforeDialog = selectedColor;
+                 if (!(await openColorPicker())) {
+                   setState(() {
+                     selectedColor = beforeDialog;
+                   });
+                 }
+                 debugPrint("bad");
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: selectedColor
               ),
               child: const Row(),
             ),
