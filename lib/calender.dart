@@ -1,5 +1,6 @@
 //import 'package:intl/intl.dart';
 //import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'constColor.dart';
@@ -11,7 +12,7 @@ class Calender extends StatefulWidget {
   State<StatefulWidget> createState() => CalenderState();
 }
 
-
+RelativeRect _longPressPosition = const RelativeRect.fromLTRB(0, 0, 0, 0);
 class CalenderState extends State<Calender> {
   late CalendarDataSource appointmentDataSource = getCalendarDataSource();
 
@@ -23,7 +24,6 @@ class CalenderState extends State<Calender> {
   void viewSche() {
     _controller.view = CalendarView.schedule;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -40,86 +40,91 @@ class CalenderState extends State<Calender> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               )),
-              child: SfCalendar(
-                backgroundColor: Colors.transparent,
-                controller: _controller,
-                // HEADER
-                // to use custom header, set H to 0
-                headerHeight: 64,
-                headerDateFormat: 'MMMM',
-                headerStyle: CalendarHeaderStyle(
+              child: GestureDetector(
+                onLongPressDown: _onLongPress,
+                child: SfCalendar(
                   backgroundColor: Colors.transparent,
-                  textStyle: TextStyle(
+                  controller: _controller,
+                  onTap: calendarTapped,
+                  onLongPress: calendarLPress,
+                  // HEADER
+                  // to use custom header, set H to 0
+                  headerHeight: 64,
+                  headerDateFormat: 'MMMM',
+                  headerStyle: CalendarHeaderStyle(
+                    backgroundColor: Colors.transparent,
+                    textStyle: TextStyle(
                       //Don't use this, it will change the bottom's text color.
                       //color: Colors.white,
-                      fontSize: 32,
-                      fontWeight: FontWeight.w400,
-                      foreground: Paint()
-                        ..style = PaintingStyle.fill
-                        ..color = TextColor),
-                ),
-                view: CalendarView.month,
-                //showNavigationArrow: true,
-                // allowedViews: const [
-                //   CalendarView.month,
-                //   CalendarView.schedule,
-                // ],
-                viewHeaderStyle: const ViewHeaderStyle(
-                  backgroundColor: Colors.transparent,
-                  dayTextStyle: TextStyle(
-                    color: TextColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-
-                // Some options
-                showDatePickerButton: true,
-                showTodayButton: true,
-                allowDragAndDrop: true,
-                //Not effect mobile in month view.
-
-                //SCHEDULE
-                scheduleViewSettings: const ScheduleViewSettings(
-                    monthHeaderSettings:
-                        MonthHeaderSettings(backgroundColor: Colors.white12)),
-                // MouthCellDesign
-
-                //MONTH
-                monthCellBuilder:
-                    (BuildContext buildContext, MonthCellDetails details) {
-                  return Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.transparent,
-                    ),
-                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                    child: Text(
-                      details.date.day.toString(),
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: TextColor,
-                        fontSize: 24,
+                        fontSize: 32,
                         fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  );
-                },
-                dataSource: appointmentDataSource,
-                firstDayOfWeek: 7,
-                // onViewChanged: viewChanged,
-                monthViewSettings: const MonthViewSettings(
-                  //appointmentDisplayCount: 3,
-                  //numberOfWeeksInView: 4, //Will conflict with showTrailingAndLeadingDates
-                  //navigationDirection: MonthNavigationDirection.horizontal,
-                  dayFormat: 'EEE',
-                  appointmentDisplayMode:
-                      MonthAppointmentDisplayMode.appointment,
-                  showTrailingAndLeadingDates: false,
-                  showAgenda: true,
-                  agendaStyle: AgendaStyle(
-                    backgroundColor: Colors.transparent,
+                        foreground: Paint()
+                          ..style = PaintingStyle.fill
+                          ..color = TextColor),
                   ),
-                  monthCellStyle: MonthCellStyle(),
+                  view: CalendarView.month,
+                  //showNavigationArrow: true,
+                  // allowedViews: const [
+                  //   CalendarView.month,
+                  //   CalendarView.schedule,
+                  // ],
+                  viewHeaderStyle: const ViewHeaderStyle(
+                    backgroundColor: Colors.transparent,
+                    dayTextStyle: TextStyle(
+                      color: TextColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+
+                  // Some options
+                  showDatePickerButton: true,
+                  showTodayButton: true,
+                  allowDragAndDrop: true,
+                  //Not effect mobile in month view.
+
+                  //SCHEDULE
+                  scheduleViewSettings: const ScheduleViewSettings(
+                      monthHeaderSettings:
+                      MonthHeaderSettings(backgroundColor: Colors.white12)),
+                  // MouthCellDesign
+
+                  //MONTH
+                  monthCellBuilder:
+                      (BuildContext buildContext, MonthCellDetails details) {
+                    return Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.transparent,
+                      ),
+                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                      child: Text(
+                        details.date.day.toString(),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: TextColor,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    );
+                  },
+                  dataSource: appointmentDataSource,
+                  firstDayOfWeek: 7,
+                  // onViewChanged: viewChanged,
+                  monthViewSettings: const MonthViewSettings(
+                    //appointmentDisplayCount: 3,
+                    //numberOfWeeksInView: 4, //Will conflict with showTrailingAndLeadingDates
+                    //navigationDirection: MonthNavigationDirection.horizontal,
+                    dayFormat: 'EEE',
+                    appointmentDisplayMode:
+                    MonthAppointmentDisplayMode.appointment,
+                    showTrailingAndLeadingDates: false,
+                    showAgenda: true,
+                    agendaStyle: AgendaStyle(
+                      backgroundColor: Colors.transparent,
+                    ),
+                    monthCellStyle: MonthCellStyle(),
+                  ),
                 ),
               ),
             ),
@@ -131,14 +136,67 @@ class CalenderState extends State<Calender> {
           // ),
         ],
       ),
+
     );
   }
+  void _onLongPress(LongPressDownDetails longPressDownDetails){
+    setState(() {
+      Offset offset = longPressDownDetails.globalPosition;
+      _longPressPosition = const RelativeRect.fromLTRB(0, 0, 0, 0);
+      _longPressPosition = _longPressPosition.shift(offset);
+    });
+  }
+
   AppointmentDataSource getCalendarDataSource() {
     List<Appointment> appointments = <Appointment>[];
     return AppointmentDataSource(appointments);
   }
-}
+  void calendarTapped(CalendarTapDetails calendarTapDetails) {
+    if (calendarTapDetails.targetElement == CalendarElement.agenda ||
+        calendarTapDetails.targetElement == CalendarElement.appointment) {
+      //final Appointment appointment = calendarTapDetails.appointments![0];
 
+    }
+  }
+  void calendarLPress(CalendarLongPressDetails calendarLongPressDetails) {
+    if (calendarLongPressDetails.targetElement == CalendarElement.appointment) {
+      final Appointment appointment = calendarLongPressDetails.appointments![0];
+      debugPrint(_longPressPosition.toString());
+      showMenu(
+          context: context,
+          position: _longPressPosition,
+          items: <PopupMenuEntry>[
+            PopupMenuItem(
+              onTap: (){},
+              child: const Row(
+                children: <Widget>[
+                  Icon(Icons.edit),
+                  Text("Edit"),
+                ],
+              ),
+            ),
+            PopupMenuItem(
+              onTap: (){
+                appointmentDataSource.appointments?.removeAt(
+                    appointmentDataSource.appointments!.indexOf(appointment));
+                appointmentDataSource.notifyListeners(
+                    CalendarDataSourceAction.remove,
+                    <Appointment>[appointment]
+                );
+              },
+              child: const Row(
+                children: <Widget>[
+                  Icon(Icons.delete),
+                  Text("Delete"),
+                ],
+              ),
+            ),
+          ],
+      );
+    }
+    debugPrint("None");
+  }
+}
 class AppointmentDataSource extends CalendarDataSource {
   AppointmentDataSource(List<Appointment> source){
     appointments = source;
