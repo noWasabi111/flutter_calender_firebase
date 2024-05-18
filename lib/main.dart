@@ -82,6 +82,17 @@ class _MyHomePageState extends State<MyHomePage> {
       }
       sliderController.open();
     }
+    Future<void> saveAppointment()  async {
+      final Appointment app = Appointment(
+        startTime: aekey.currentState!.startTime,
+        endTime: aekey.currentState!.endTime,
+        subject: aekey.currentState!.eventName,
+        color: aekey.currentState!.selectedColor,
+      );
+      sfkey.currentState?.appointmentDataSource.appointments?.add(app);
+      sfkey.currentState?.appointmentDataSource.notifyListeners(
+          CalendarDataSourceAction.add, <Appointment>[app]);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -207,16 +218,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {
-                      final Appointment app = Appointment(
-                          startTime: aekey.currentState!.startTime,
-                          endTime: aekey.currentState!.endTime,
-                          subject: aekey.currentState!.eventName,
-                          color: aekey.currentState!.selectedColor,
-                      );
-                      sfkey.currentState?.appointmentDataSource.appointments?.add(app);
-                      sfkey.currentState?.appointmentDataSource.notifyListeners(
-                          CalendarDataSourceAction.add, <Appointment>[app]);
+                    onPressed: () async {
+                      await saveAppointment();
+                      sliderController.hide();
+                      showFAB();
                     },
                     icon: const Icon(
                       Icons.save,
