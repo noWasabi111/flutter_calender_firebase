@@ -39,6 +39,7 @@ dependencies:
   syncfusion_flutter_calendar: ^25.1.42
   sliding_up_panel: ^2.0.0+1
   flex_color_picker: ^3.4.1
+  omni_datetime_picker: ^1.1.0
 
 
 dev_dependencies:

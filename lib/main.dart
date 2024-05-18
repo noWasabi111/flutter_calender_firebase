@@ -38,6 +38,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   static GlobalKey<CalenderState> sfkey = GlobalKey();
+  static GlobalKey<ApmEditState> aekey = GlobalKey();
   static Calender sfcalender = Calender(
     key: sfkey,
   );
@@ -52,23 +53,25 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
   bool _showFAB = true;
-  double _roundCorner = 0.0;
+  final double _roundCorner = 24.0;
   void showFAB(){
     setState(() {
       _showFAB = !_showFAB;
     });
   }
-  void onPanelChange(double pos) {
-    setState(() {
-      if (sliderController.isPanelOpen){
-        _roundCorner = 0.0;
-      } else {
-        _roundCorner = 24.0;
-      }
-    });
-  }
+  // void onPanelChange(double pos) {
+  //   setState(() {
+  //     if (sliderController.isPanelOpen){
+  //       _roundCorner = 0.0;
+  //     } else {
+  //       _roundCorner = 24.0;
+  //     }
+  //   });
+  // }
 
-  ApmEdit apmEditor = const ApmEdit();
+  ApmEdit apmEditor = ApmEdit(
+    key: aekey,
+  );
   //  SomeSliderPanelSettingsEnd
   @override
   Widget build(BuildContext context) {
@@ -171,13 +174,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
       body: SlidingUpPanel(
         minHeight: 150,
-        maxHeight: screenSize.height,
+        maxHeight: 500,
         controller: sliderController,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(_roundCorner),
           topRight: Radius.circular(_roundCorner),
         ),
-        onPanelSlide: onPanelChange,
+        //onPanelSlide: onPanelChange,
         header: SizedBox(
           width: screenSize.width,
           //color: Colors.blueAccent,
@@ -204,7 +207,17 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {  },
+                    onPressed: () {
+                      final Appointment app = Appointment(
+                          startTime: aekey.currentState!.startTime,
+                          endTime: aekey.currentState!.endTime,
+                          subject: aekey.currentState!.eventName,
+                          color: aekey.currentState!.selectedColor,
+                      );
+                      sfkey.currentState?.appointmentDataSource.appointments?.add(app);
+                      sfkey.currentState?.appointmentDataSource.notifyListeners(
+                          CalendarDataSourceAction.add, <Appointment>[app]);
+                    },
                     icon: const Icon(
                       Icons.save,
                     ),
@@ -233,20 +246,8 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: _showFAB ? FloatingActionButton(
         backgroundColor: eventColor,
         onPressed: () {
-          //  Under progress
           showSlider();
           showFAB();
-          //  Under progress
-          final Appointment app = Appointment(
-              startTime: sfkey.currentState?.controller.displayDate!,
-              endTime: sfkey.currentState?.controller.displayDate!
-                  .add(const Duration(hours: 2)),
-              subject: 'Add Appointment',
-              color: Colors.blueAccent);
-          sfkey.currentState?.appointmentDataSource.appointments?.add(app);
-          sfkey.currentState?.appointmentDataSource.notifyListeners(
-              CalendarDataSourceAction.add, <Appointment>[app]);
-
         },
         child: const Icon(
           Icons.add,

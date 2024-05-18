@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 
 class ApmEdit extends StatefulWidget {
   const ApmEdit({super.key});
 
   @override
-  State<StatefulWidget> createState() => _ApmEditState();
+  State<StatefulWidget> createState() => ApmEditState();
 }
 
-class _ApmEditState extends State<ApmEdit> {
+class ApmEditState extends State<ApmEdit> {
+  String eventName = "New Event";
   Color selectedColor = Colors.blueAccent;
+  DateTime startTime = DateTime.now();
+  DateTime endTime = DateTime.now();
 
+  TextEditingController textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
 
@@ -47,20 +53,70 @@ class _ApmEditState extends State<ApmEdit> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              controller: textEditingController,
+              decoration: const InputDecoration(
                 labelText: 'Event Name',
               ),
+              onChanged: (_) {
+                if (textEditingController.text != ''){
+                  setState(() {
+                    eventName = textEditingController.text;
+                  });
+                } else {
+                  setState(() {
+                    eventName = "New Event";
+                  });
+                }
+              },
             ),
-            const TextField(
-              decoration: InputDecoration(
-                labelText: 'Start Time',
+            const SizedBox(height: 12.0),
+            const Text(
+              "Start Time",
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.black87,
               ),
             ),
-            const TextField(
-              decoration: InputDecoration(
-                labelText: 'End Time',
+            const SizedBox(height: 4.0),
+            ElevatedButton(
+              onPressed: () async {
+                DateTime? dateTime = await showOmniDateTimePicker(context: context);
+                if (dateTime != null){
+                  setState(() {
+                    endTime = dateTime;
+                  });
+                }
+              },
+              child: Row(
+                children: [
+                  Text(DateFormat('yyyy-MM-dd HH:mm').format(startTime).toString())
+                ],
+              )
+            ),
+            const SizedBox(height: 12.0),
+            const Text(
+              "End Time",
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.black87,
               ),
+            ),
+            const SizedBox(height: 4.0),
+            ElevatedButton(
+                  onPressed: () async {
+                  DateTime? dateTime = await showOmniDateTimePicker(context: context);
+                  if (dateTime != null){
+                    setState(() {
+                      endTime = dateTime;
+                    });
+                  }
+                },
+                child: Row(
+                  children: [
+                    Text(DateFormat('yyyy-MM-dd HH:mm').format(endTime).toString())
+                  ],
+                )
             ),
             const SizedBox(height: 12.0),
             const Text(
@@ -79,17 +135,11 @@ class _ApmEditState extends State<ApmEdit> {
                      selectedColor = beforeDialog;
                    });
                  }
-                 debugPrint("bad");
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: selectedColor
               ),
               child: const Row(),
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Submit'),
             ),
           ],
         ),
