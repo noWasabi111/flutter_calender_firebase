@@ -1,12 +1,13 @@
-//import 'package:intl/intl.dart';
-//import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+
+import 'appointmentEditor.dart';
 import 'constColor.dart';
 
 class Calender extends StatefulWidget {
   const Calender({super.key});
+
 
   @override
   State<StatefulWidget> createState() => CalenderState();
@@ -14,16 +15,33 @@ class Calender extends StatefulWidget {
 
 RelativeRect _longPressPosition = const RelativeRect.fromLTRB(0, 0, 0, 0);
 class CalenderState extends State<Calender> {
-  late CalendarDataSource appointmentDataSource = getCalendarDataSource();
+  String eventName = "New Event";
+  Color selectedColor = Colors.blueAccent;
+  DateTime startTime = DateTime.now();
+  DateTime endTime = DateTime.now();
+  bool isAllDay = false;
+  String notes = '';
+  late Widget parentWg;
 
+
+
+  late CalendarDataSource appointmentDataSource = getCalendarDataSource();
   final CalendarController _controller = CalendarController();
   get controller => _controller;
+
   void viewMon() {
     _controller.view = CalendarView.month;
   }
   void viewSche() {
     _controller.view = CalendarView.schedule;
   }
+  void setWidget(Widget pWg){
+    setState(() {
+      parentWg = pWg;
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -158,16 +176,46 @@ class CalenderState extends State<Calender> {
 
     }
   }
+  late Appointment appointment;
   void calendarLPress(CalendarLongPressDetails calendarLongPressDetails) {
     if (calendarLongPressDetails.targetElement == CalendarElement.appointment) {
-      final Appointment appointment = calendarLongPressDetails.appointments![0];
-      debugPrint(_longPressPosition.toString());
+      appointment = calendarLongPressDetails.appointments![0];
       showMenu(
           context: context,
           position: _longPressPosition,
           items: <PopupMenuEntry>[
             PopupMenuItem(
-              onTap: (){},
+              onTap: () async {
+
+                final ApmEdit editor = ApmEdit();
+                editor.app = appointment;
+                editor.editing = true;
+
+                await Navigator.push<Widget>(
+                  context,
+                  MaterialPageRoute(
+                  builder: (BuildContext context) => editor),
+                ).then((app){
+                  if(editor.editing == true){
+                    appointmentDataSource.appointments?.removeAt(
+                        appointmentDataSource.appointments!.indexOf(appointment));
+                    appointmentDataSource.notifyListeners(
+                        CalendarDataSourceAction.remove,
+                        <Appointment>[appointment]);
+                    appointmentDataSource.appointments?.add(
+                        editor.app);
+                    appointmentDataSource.notifyListeners(
+                        CalendarDataSourceAction.add, <Appointment?>[editor.app]);
+                    editor.editing = false;
+                  }
+                });
+
+                // setState(() {
+                //   apmEditor?.editing = true;
+                //   apmEditor?.app = appointment;
+                // });
+                // (parentWg as FloatingActionButton).onPressed!();
+              },
               child: const Row(
                 children: <Widget>[
                   Icon(Icons.edit),
@@ -181,8 +229,7 @@ class CalenderState extends State<Calender> {
                     appointmentDataSource.appointments!.indexOf(appointment));
                 appointmentDataSource.notifyListeners(
                     CalendarDataSourceAction.remove,
-                    <Appointment>[appointment]
-                );
+                    <Appointment>[appointment]);
               },
               child: const Row(
                 children: <Widget>[
@@ -194,7 +241,7 @@ class CalenderState extends State<Calender> {
           ],
       );
     }
-    debugPrint("None");
+    //debugPrint("None");
   }
 }
 class AppointmentDataSource extends CalendarDataSource {

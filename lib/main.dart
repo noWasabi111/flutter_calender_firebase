@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -6,6 +7,8 @@ import 'calender.dart';
 import 'test_page.dart';
 import 'constColor.dart';
 import 'appointmentEditor.dart';
+
+StreamController<Appointment> streamController = StreamController<Appointment>();
 
 void main() {
   runApp(const MyApp());
@@ -37,62 +40,80 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  GlobalKey fabkey = GlobalKey();
   static GlobalKey<CalenderState> sfkey = GlobalKey();
   static GlobalKey<ApmEditState> aekey = GlobalKey();
-  static Calender sfcalender = Calender(
+  late final FloatingActionButton floatingActionButton;
+  Calender sfcalender = Calender(
     key: sfkey,
   );
   //  SomeSliderPanelSettings
+
   PanelController sliderController = PanelController();
   @override
   void initState()
   {
+    floatingActionButton = FloatingActionButton(
+      key: fabkey,
+      backgroundColor: eventColor,
+      onPressed: fabOnPress,
+      child: const Icon(
+        Icons.add,
+        color: Colors.white,
+      ),
+    );
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       sliderController.hide();
+      sfkey.currentState?.setWidget(floatingActionButton);
     });
+
   }
+
   bool _showFAB = true;
-  final double _roundCorner = 24.0;
   void showFAB(){
     setState(() {
       _showFAB = !_showFAB;
     });
   }
-  // void onPanelChange(double pos) {
-  //   setState(() {
-  //     if (sliderController.isPanelOpen){
-  //       _roundCorner = 0.0;
-  //     } else {
-  //       _roundCorner = 24.0;
-  //     }
-  //   });
-  // }
+  ApmEdit apmEditor = ApmEdit(key: aekey,);
+  Future<void> showSlider() async {
+    if (!sliderController.isPanelShown){
+      await sliderController.show();
+    }
+    sliderController.open();
+  }
+  void fabOnPress(){
+    apmEditor.clearEdiror();
+    showFAB();
+    showSlider();
+  }
 
-  ApmEdit apmEditor = ApmEdit(
-    key: aekey,
-  );
-  //  SomeSliderPanelSettingsEnd
+  Future<void> saveAppointment()  async {
+    if (apmEditor.editing){
+      debugPrint("Try Delete");
+      sfkey.currentState?.appointmentDataSource.appointments?.removeAt(
+          sfkey.currentState!.appointmentDataSource.appointments!.indexOf(apmEditor.app)
+      );
+      sfkey.currentState?.appointmentDataSource.notifyListeners(
+          CalendarDataSourceAction.remove,
+          <Appointment?>[apmEditor.app]
+      );
+    }
+    sfkey.currentState?.appointmentDataSource.appointments?.add(
+        apmEditor.app);
+    sfkey.currentState?.appointmentDataSource.notifyListeners(
+        CalendarDataSourceAction.add, <Appointment?>[apmEditor.app]);
+    apmEditor.editing = false;
+  }
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    Future<void> showSlider() async {
-      if (!sliderController.isPanelShown){
-        await sliderController.show();
-      }
-      sliderController.open();
-    }
-    Future<void> saveAppointment()  async {
-      final Appointment app = Appointment(
-        startTime: aekey.currentState!.startTime,
-        endTime: aekey.currentState!.endTime,
-        subject: aekey.currentState!.eventName,
-        color: aekey.currentState!.selectedColor,
-      );
-      sfkey.currentState?.appointmentDataSource.appointments?.add(app);
-      sfkey.currentState?.appointmentDataSource.notifyListeners(
-          CalendarDataSourceAction.add, <Appointment>[app]);
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -185,11 +206,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
       body: SlidingUpPanel(
         minHeight: 150,
-        maxHeight: 500,
+        maxHeight: screenSize.height,
         controller: sliderController,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(_roundCorner),
-          topRight: Radius.circular(_roundCorner),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(24.0),
+          topRight: Radius.circular(24.0),
         ),
         //onPanelSlide: onPanelChange,
         header: SizedBox(
@@ -248,17 +269,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: _showFAB ? FloatingActionButton(
-        backgroundColor: eventColor,
-        onPressed: () {
-          showSlider();
-          showFAB();
-        },
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      ) : null,
+      floatingActionButton: _showFAB ? floatingActionButton : null,
     );
   }
 }
