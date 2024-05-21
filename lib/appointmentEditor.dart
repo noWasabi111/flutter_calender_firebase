@@ -241,7 +241,10 @@ class ApmEditState extends State<ApmEdit> {
 
   Future<void> showNotesContent() async {
     if (widget.apmEditSet.editing) {
-      diglogController.text = widget.apmEditSet.app.notes!;
+      String? notes = widget.apmEditSet.app.notes;
+      if(notes != null){
+        diglogController.text = notes;
+      }
     }
     return showDialog<void>(
       context: context,
