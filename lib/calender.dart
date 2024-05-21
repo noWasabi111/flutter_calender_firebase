@@ -8,12 +8,12 @@ import 'constColor.dart';
 class Calender extends StatefulWidget {
   const Calender({super.key});
 
-
   @override
   State<StatefulWidget> createState() => CalenderState();
 }
 
 RelativeRect _longPressPosition = const RelativeRect.fromLTRB(0, 0, 0, 0);
+
 class CalenderState extends State<Calender> {
   String eventName = "New Event";
   Color selectedColor = Colors.blueAccent;
@@ -21,27 +21,27 @@ class CalenderState extends State<Calender> {
   DateTime endTime = DateTime.now();
   bool isAllDay = false;
   String notes = '';
-  late Widget parentWg;
 
-
+  //late Widget parentWg;
 
   late CalendarDataSource appointmentDataSource = getCalendarDataSource();
   final CalendarController _controller = CalendarController();
+
   get controller => _controller;
 
   void viewMon() {
     _controller.view = CalendarView.month;
   }
+
   void viewSche() {
     _controller.view = CalendarView.schedule;
   }
-  void setWidget(Widget pWg){
-    setState(() {
-      parentWg = pWg;
-    });
-  }
 
-
+  // void setWidget(Widget pWg) {
+  //   setState(() {
+  //     parentWg = pWg;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -72,8 +72,8 @@ class CalenderState extends State<Calender> {
                   headerStyle: CalendarHeaderStyle(
                     backgroundColor: Colors.transparent,
                     textStyle: TextStyle(
-                      //Don't use this, it will change the bottom's text color.
-                      //color: Colors.white,
+                        //Don't use this, it will change the bottom's text color.
+                        //color: Colors.white,
                         fontSize: 32,
                         fontWeight: FontWeight.w400,
                         foreground: Paint()
@@ -104,7 +104,7 @@ class CalenderState extends State<Calender> {
                   //SCHEDULE
                   scheduleViewSettings: const ScheduleViewSettings(
                       monthHeaderSettings:
-                      MonthHeaderSettings(backgroundColor: Colors.white12)),
+                          MonthHeaderSettings(backgroundColor: Colors.white12)),
                   // MouthCellDesign
 
                   //MONTH
@@ -135,7 +135,7 @@ class CalenderState extends State<Calender> {
                     //navigationDirection: MonthNavigationDirection.horizontal,
                     dayFormat: 'EEE',
                     appointmentDisplayMode:
-                    MonthAppointmentDisplayMode.appointment,
+                        MonthAppointmentDisplayMode.appointment,
                     showTrailingAndLeadingDates: false,
                     showAgenda: true,
                     agendaStyle: AgendaStyle(
@@ -154,10 +154,10 @@ class CalenderState extends State<Calender> {
           // ),
         ],
       ),
-
     );
   }
-  void _onLongPress(LongPressDownDetails longPressDownDetails){
+
+  void _onLongPress(LongPressDownDetails longPressDownDetails) {
     setState(() {
       Offset offset = longPressDownDetails.globalPosition;
       _longPressPosition = const RelativeRect.fromLTRB(0, 0, 0, 0);
@@ -169,83 +169,82 @@ class CalenderState extends State<Calender> {
     List<Appointment> appointments = <Appointment>[];
     return AppointmentDataSource(appointments);
   }
+
   void calendarTapped(CalendarTapDetails calendarTapDetails) {
     if (calendarTapDetails.targetElement == CalendarElement.agenda ||
         calendarTapDetails.targetElement == CalendarElement.appointment) {
       //final Appointment appointment = calendarTapDetails.appointments![0];
-
     }
   }
+
   late Appointment appointment;
+
   void calendarLPress(CalendarLongPressDetails calendarLongPressDetails) {
     if (calendarLongPressDetails.targetElement == CalendarElement.appointment) {
       appointment = calendarLongPressDetails.appointments![0];
       showMenu(
-          context: context,
-          position: _longPressPosition,
-          items: <PopupMenuEntry>[
-            PopupMenuItem(
-              onTap: () async {
+        context: context,
+        position: _longPressPosition,
+        items: <PopupMenuEntry>[
+          PopupMenuItem(
+            onTap: () async {
+              final ApmEdit editor = ApmEdit();
+              editor.apmEditSet.app = appointment;
+              editor.apmEditSet.editing = true;
 
-                final ApmEdit editor = ApmEdit();
-                editor.app = appointment;
-                editor.editing = true;
+              await Navigator.push<Widget>(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) => editor),
+              ).then((app) {
+                if (editor.apmEditSet.editing == true) {
+                  appointmentDataSource.appointments?.removeAt(
+                      appointmentDataSource.appointments!.indexOf(appointment));
+                  appointmentDataSource.notifyListeners(
+                      CalendarDataSourceAction.remove,
+                      <Appointment>[appointment]);
+                  appointmentDataSource.appointments?.add(editor.apmEditSet.app);
+                  appointmentDataSource.notifyListeners(
+                      CalendarDataSourceAction.add, <Appointment?>[editor.apmEditSet.app]);
+                  editor.apmEditSet.editing = false;
+                }
+              });
 
-                await Navigator.push<Widget>(
-                  context,
-                  MaterialPageRoute(
-                  builder: (BuildContext context) => editor),
-                ).then((app){
-                  if(editor.editing == true){
-                    appointmentDataSource.appointments?.removeAt(
-                        appointmentDataSource.appointments!.indexOf(appointment));
-                    appointmentDataSource.notifyListeners(
-                        CalendarDataSourceAction.remove,
-                        <Appointment>[appointment]);
-                    appointmentDataSource.appointments?.add(
-                        editor.app);
-                    appointmentDataSource.notifyListeners(
-                        CalendarDataSourceAction.add, <Appointment?>[editor.app]);
-                    editor.editing = false;
-                  }
-                });
-
-                // setState(() {
-                //   apmEditor?.editing = true;
-                //   apmEditor?.app = appointment;
-                // });
-                // (parentWg as FloatingActionButton).onPressed!();
-              },
-              child: const Row(
-                children: <Widget>[
-                  Icon(Icons.edit),
-                  Text("Edit"),
-                ],
-              ),
+              // setState(() {
+              //   apmEditor?.editing = true;
+              //   apmEditor?.app = appointment;
+              // });
+              // (parentWg as FloatingActionButton).onPressed!();
+            },
+            child: const Row(
+              children: <Widget>[
+                Icon(Icons.edit),
+                Text("Edit"),
+              ],
             ),
-            PopupMenuItem(
-              onTap: (){
-                appointmentDataSource.appointments?.removeAt(
-                    appointmentDataSource.appointments!.indexOf(appointment));
-                appointmentDataSource.notifyListeners(
-                    CalendarDataSourceAction.remove,
-                    <Appointment>[appointment]);
-              },
-              child: const Row(
-                children: <Widget>[
-                  Icon(Icons.delete),
-                  Text("Delete"),
-                ],
-              ),
+          ),
+          PopupMenuItem(
+            onTap: () {
+              appointmentDataSource.appointments?.removeAt(
+                  appointmentDataSource.appointments!.indexOf(appointment));
+              appointmentDataSource.notifyListeners(
+                  CalendarDataSourceAction.remove, <Appointment>[appointment]);
+            },
+            child: const Row(
+              children: <Widget>[
+                Icon(Icons.delete),
+                Text("Delete"),
+              ],
             ),
-          ],
+          ),
+        ],
       );
     }
     //debugPrint("None");
   }
 }
+
 class AppointmentDataSource extends CalendarDataSource {
-  AppointmentDataSource(List<Appointment> source){
+  AppointmentDataSource(List<Appointment> source) {
     appointments = source;
   }
 }

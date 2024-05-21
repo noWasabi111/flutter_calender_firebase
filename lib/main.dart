@@ -1,14 +1,13 @@
-import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'dart:async';
 import 'calender.dart';
 import 'test_page.dart';
 import 'constColor.dart';
 import 'appointmentEditor.dart';
 
-StreamController<Appointment> streamController = StreamController<Appointment>();
 
 void main() {
   runApp(const MyApp());
@@ -31,30 +30,24 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  GlobalKey fabkey = GlobalKey();
   static GlobalKey<CalenderState> sfkey = GlobalKey();
-  static GlobalKey<ApmEditState> aekey = GlobalKey();
   late final FloatingActionButton floatingActionButton;
   Calender sfcalender = Calender(
     key: sfkey,
   );
   //  SomeSliderPanelSettings
-
   PanelController sliderController = PanelController();
   @override
   void initState()
   {
     floatingActionButton = FloatingActionButton(
-      key: fabkey,
       backgroundColor: eventColor,
       onPressed: fabOnPress,
       child: const Icon(
@@ -65,18 +58,16 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       sliderController.hide();
-      sfkey.currentState?.setWidget(floatingActionButton);
+      //sfkey.currentState?.setWidget(floatingActionButton);
     });
-
   }
-
   bool _showFAB = true;
   void showFAB(){
     setState(() {
       _showFAB = !_showFAB;
     });
   }
-  ApmEdit apmEditor = ApmEdit(key: aekey,);
+  ApmEdit apmEditor = ApmEdit();
   Future<void> showSlider() async {
     if (!sliderController.isPanelShown){
       await sliderController.show();
@@ -84,32 +75,27 @@ class _MyHomePageState extends State<MyHomePage> {
     sliderController.open();
   }
   void fabOnPress(){
-    apmEditor.clearEdiror();
+    apmEditor.apmEditSet.clearEdiror();
     showFAB();
     showSlider();
   }
 
   Future<void> saveAppointment()  async {
-    if (apmEditor.editing){
+    if (apmEditor.apmEditSet.editing){
       debugPrint("Try Delete");
       sfkey.currentState?.appointmentDataSource.appointments?.removeAt(
-          sfkey.currentState!.appointmentDataSource.appointments!.indexOf(apmEditor.app)
+          sfkey.currentState!.appointmentDataSource.appointments!.indexOf(apmEditor.apmEditSet.app)
       );
       sfkey.currentState?.appointmentDataSource.notifyListeners(
           CalendarDataSourceAction.remove,
-          <Appointment?>[apmEditor.app]
+          <Appointment?>[apmEditor.apmEditSet.app]
       );
     }
-    sfkey.currentState?.appointmentDataSource.appointments?.add(
-        apmEditor.app);
+    sfkey.currentState?.appointmentDataSource.appointments?.add(apmEditor.apmEditSet.app);
     sfkey.currentState?.appointmentDataSource.notifyListeners(
-        CalendarDataSourceAction.add, <Appointment?>[apmEditor.app]);
-    apmEditor.editing = false;
+        CalendarDataSourceAction.add, <Appointment?>[apmEditor.apmEditSet.app]);
+    apmEditor.apmEditSet.editing = false;
   }
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
