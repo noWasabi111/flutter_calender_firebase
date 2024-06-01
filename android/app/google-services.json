@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "687671524152",
+    "project_id": "fir-calender-617ed",
+    "storage_bucket": "fir-calender-617ed.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687671524152:android:9f745d0da80dc32b269fcd",
+        "android_client_info": {
+          "package_name": "com.example.flutter_calender_firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCD2RR9TQEkRseWNResZXmYKkJr6cVgwME"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

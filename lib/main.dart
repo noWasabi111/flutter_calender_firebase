@@ -1,15 +1,26 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'dart:async';
 import 'calender.dart';
-import 'test_page.dart';
+import 'login_page.dart';
+import 'sign_up_page.dart';
 import 'constColor.dart';
 import 'appointmentEditor.dart';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+import 'package:flutter_calender_firebase/toast_set/toast.dart';
+
+
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -26,6 +37,11 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const MyHomePage(),
+      routes: {
+        '/login': (context) => LoginPage(),
+        '/signUp': (context) => SignUpPage(),
+        '/home': (context) => MyApp(),
+      },
     );
   }
 }
@@ -37,7 +53,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  static GlobalKey<CalenderState> sfkey = GlobalKey();
+  //static GlobalKey<CalenderState> sfkey = GlobalKey();
+  static GlobalKey<CalenderState> sfkey = GlobalKey<CalenderState>();
   late final FloatingActionButton floatingActionButton;
   Calender sfcalender = Calender(
     key: sfkey,
@@ -56,6 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
     super.initState();
+    //print('sfkey initialized: ${sfkey != null}');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       sliderController.hide();
       //sfkey.currentState?.setWidget(floatingActionButton);
@@ -100,6 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
+    var currentUser = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
       appBar: AppBar(
@@ -135,9 +154,11 @@ class _MyHomePageState extends State<MyHomePage> {
               title: const Text('Month'),
               leading: const Icon(Icons.calendar_month),
               onTap: () {
+                print('Before Navigator.pop');
                 // Update the state of the app
                 // Then close the drawer
                 Navigator.pop(context);
+                print('After Navigator.pop');
                 sfkey.currentState?.viewMon();
               },
             ),
@@ -161,34 +182,76 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(
               height: 10,
             ),
-            ExpansionTile(
-              title: const Text('Accounts'),
-              tilePadding: const EdgeInsets.fromLTRB(16, 0, 20, 0),
+            Column(
               children: [
-                ListTile(
-                  title: const Text(
-                    'Add...',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                  leading: const Icon(
-                    Icons.add,
-                    color: Colors.grey,
-                  ),
-                  onTap: () {
-                    // Update the state of the app
-                    // Then close the drawer
-                    Navigator.pop(context);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const TestPage()));
-                  },
+                ExpansionTile(
+                  title: const Text('Accounts'),
+                  tilePadding: const EdgeInsets.fromLTRB(16, 0, 20, 0),
+                  children: currentUser != null ? [
+                    ListTile(
+                      title: Text(
+                        currentUser.email!.length > 5 ? "${currentUser.email!.substring(0, 5)}..." : currentUser.email!,
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      leading: const Icon(
+                        Icons.account_circle,
+                        color: TextColor,
+                      ),
+                      onTap: () {
+                        //
+                      },
+                    ),
+                  ] : [
+                    ListTile(
+                      title: const Text(
+                        'Add...',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      leading: const Icon(
+                        Icons.add,
+                        color: Colors.grey,
+                      ),
+                      onTap: () {
+                        // Update the state of the app
+                        // Then close the drawer
+                        Navigator.pop(context);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginPage()));
+                      },
+                    ),
+                  ],
                 ),
+                if (currentUser != null)
+                  ListTile(
+                    title: const Text(
+                      'Logout',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    leading: const Icon(
+                      Icons.logout,
+                      color: Colors.black,
+                    ),
+                    onTap: () {
+                      FirebaseAuth.instance.signOut();
+                      currentUser = null;
+                        if (currentUser == null) {
+                        showToast(message: "User is successfully logout");
+                        Navigator.pushNamed(context, "/home");
+                        } else {
+                        showToast(message: "some error occured");
+
+                      }
+                    },
+                  ),
+
               ],
             ),
           ],
         ),
       ),
+
 
       body: SlidingUpPanel(
         minHeight: 150,
@@ -258,4 +321,6 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: _showFAB ? floatingActionButton : null,
     );
   }
+
 }
+
