@@ -154,11 +154,11 @@ class _MyHomePageState extends State<MyHomePage> {
               title: const Text('Month'),
               leading: const Icon(Icons.calendar_month),
               onTap: () {
-                print('Before Navigator.pop');
+                debugPrint('Before Navigator.pop');
                 // Update the state of the app
                 // Then close the drawer
                 Navigator.pop(context);
-                print('After Navigator.pop');
+                debugPrint('After Navigator.pop');
                 sfkey.currentState?.viewMon();
               },
             ),
