@@ -29,7 +29,7 @@ class ApmEditState extends State<ApmEdit> {
           visible: widget.apmEditSet.editing,
           child: IconButton(
               onPressed: () {
-                widget.apmEditSet.clearEdiror();
+                widget.apmEditSet.clearEditor();
                 Navigator.pop(context);
               },
               icon: const Icon(
@@ -321,7 +321,7 @@ class ApmEditSet{
   );
   bool editing = false;
 
-  void clearEdiror() {
+  void clearEditor() {
     app = Appointment(
       subject: "New Event",
       startTime: DateTime.now(),

@@ -198,7 +198,7 @@ class CalenderState extends State<Calender> {
               await Navigator.push<Widget>(
                 context,
                 MaterialPageRoute(builder: (BuildContext context) => editor),
-              ).then((app) {
+              ).then((app) async {
                 if (editor.apmEditSet.editing == true) {
                   appointmentDataSource.appointments?.removeAt(
                       appointmentDataSource.appointments!.indexOf(appointment));
@@ -209,6 +209,12 @@ class CalenderState extends State<Calender> {
                   appointmentDataSource.notifyListeners(
                       CalendarDataSourceAction.add, <Appointment?>[editor.apmEditSet.app]);
                   editor.apmEditSet.editing = false;
+
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  await prefs.clear();
+                  List<AppointmentModel>? appointmentModels = appointmentDataSource.appointments?.map((appointment) => AppointmentModel.fromAppointment(appointment)).toList();
+                  String appointmentsJson = json.encode(appointmentModels?.map((model) => model.toJson()).toList());
+                  await prefs.setString('appointments', appointmentsJson);
                 }
               });
 

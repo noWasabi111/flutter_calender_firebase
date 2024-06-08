@@ -96,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
     sliderController.open();
   }
   void fabOnPress(){
-    apmEditor.apmEditSet.clearEdiror();
+    apmEditor.apmEditSet.clearEditor();
     showFAB();
     showSlider();
   }

@@ -7,9 +7,9 @@ class AppointmentModel {
   String subject;
   Color color;
   bool isAllDay;
+  String? notes;
 
-
-  AppointmentModel({required this.startTime, required this.endTime, required this.subject, required this.color, required this.isAllDay});
+  AppointmentModel({required this.startTime, required this.endTime, required this.subject, required this.color, required this.isAllDay, required this.notes});
 
   factory AppointmentModel.fromJson(Map<String, dynamic> json) {
     return AppointmentModel(
@@ -18,6 +18,7 @@ class AppointmentModel {
       subject: json['subject'],
       color: Color(json['color']),
       isAllDay: json['isAllDay'],
+      notes: json['notes'],
     );
   }
 
@@ -28,6 +29,7 @@ class AppointmentModel {
       'subject': subject,
       'color': color.value,
       'isAllDay': isAllDay,
+      'notes': notes,
     };
   }
 
@@ -37,7 +39,8 @@ class AppointmentModel {
       endTime: endTime,
       subject: subject,
       color: color,
-      isAllDay: isAllDay
+      isAllDay: isAllDay,
+      notes: notes,
     );
   }
 
@@ -47,7 +50,8 @@ class AppointmentModel {
       endTime: appointment.endTime,
       subject: appointment.subject,
       color: appointment.color,
-      isAllDay: appointment.isAllDay
+      isAllDay: appointment.isAllDay,
+      notes: appointment.notes,
     );
   }
 }
