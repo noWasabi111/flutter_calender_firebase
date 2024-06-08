@@ -45,6 +45,7 @@ dependencies:
   firebase_auth: ^4.19.6
   firebase_storage: ^11.7.6
   fluttertoast: ^8.2.5
+  shared_preferences: ^2.2.3
 
 
 dev_dependencies:

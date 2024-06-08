@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-
+import 'AppointmentModel.dart';
 import 'appointmentEditor.dart';
 import 'constColor.dart';
 
@@ -223,11 +226,17 @@ class CalenderState extends State<Calender> {
             ),
           ),
           PopupMenuItem(
-            onTap: () {
+            onTap: () async {
               appointmentDataSource.appointments?.removeAt(
                   appointmentDataSource.appointments!.indexOf(appointment));
               appointmentDataSource.notifyListeners(
                   CalendarDataSourceAction.remove, <Appointment>[appointment]);
+
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              await prefs.clear();
+              List<AppointmentModel>? appointmentModels = appointmentDataSource.appointments?.map((appointment) => AppointmentModel.fromAppointment(appointment)).toList();
+              String appointmentsJson = json.encode(appointmentModels?.map((model) => model.toJson()).toList());
+              await prefs.setString('appointments', appointmentsJson);
             },
             child: const Row(
               children: <Widget>[

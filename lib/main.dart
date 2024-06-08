@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -9,10 +11,10 @@ import 'login_page.dart';
 import 'sign_up_page.dart';
 import 'constColor.dart';
 import 'appointmentEditor.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-
+import 'AppointmentModel.dart';
 import 'package:flutter_calender_firebase/toast_set/toast.dart';
 
 
@@ -56,6 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
   //static GlobalKey<CalenderState> sfkey = GlobalKey();
   static GlobalKey<CalenderState> sfkey = GlobalKey<CalenderState>();
   late final FloatingActionButton floatingActionButton;
+  ApmEdit apmEditor = ApmEdit();
   Calender sfcalender = Calender(
     key: sfkey,
   );
@@ -78,6 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
       sliderController.hide();
       //sfkey.currentState?.setWidget(floatingActionButton);
     });
+    _loadAppointments();
   }
   bool _showFAB = true;
   void showFAB(){
@@ -85,7 +89,6 @@ class _MyHomePageState extends State<MyHomePage> {
       _showFAB = !_showFAB;
     });
   }
-  ApmEdit apmEditor = ApmEdit();
   Future<void> showSlider() async {
     if (!sliderController.isPanelShown){
       await sliderController.show();
@@ -97,6 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
     showFAB();
     showSlider();
   }
+
 
   Future<void> saveAppointment()  async {
     if (apmEditor.apmEditSet.editing){
@@ -113,6 +117,26 @@ class _MyHomePageState extends State<MyHomePage> {
     sfkey.currentState?.appointmentDataSource.notifyListeners(
         CalendarDataSourceAction.add, <Appointment?>[apmEditor.apmEditSet.app]);
     apmEditor.apmEditSet.editing = false;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    List<AppointmentModel>? appointmentModels = sfkey.currentState?.appointmentDataSource.appointments?.map((appointment) => AppointmentModel.fromAppointment(appointment)).toList();
+    String appointmentsJson = json.encode(appointmentModels?.map((model) => model.toJson()).toList());
+    await prefs.setString('appointments', appointmentsJson);
+  }
+
+  _loadAppointments() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? appointmentsJson = prefs.getString('appointments');
+    if (appointmentsJson != null) {
+      List<dynamic> jsonList = json.decode(appointmentsJson);
+      List<AppointmentModel> appointmentModels = jsonList.map((json) => AppointmentModel.fromJson(json)).toList();
+      for(var appointmentM in appointmentModels){
+        setState(() {
+          sfkey.currentState?.appointmentDataSource.appointments?.add(appointmentM.toAppointment());
+        });
+      }
+    }
   }
 
   @override
